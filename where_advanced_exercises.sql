@@ -17,6 +17,7 @@ select distinct last_name from employees where last_name like 'e%' or last_name 
 select distinct last_name from employees where last_name not like 'e%' and last_name like '%e';
 -- 7
 select distinct last_name from employees where last_name like 'e%' and last_name like '%e';
+select distinct last_name from employees where last_name like 'e%e';
 -- 8 10008, 10011, 10012
 select emp_no, hire_date from employees where hire_date like '199%';
 -- 9 10078, 10115, 10261
@@ -28,3 +29,6 @@ select distinct last_name from employees where last_name like '%q%';
 -- 12
 select distinct last_name from employees where last_name like '%q%' and last_name not like '%qu%';
 
+
+-- LIKE does work on integer
+select * from employees where emp_no like '1000%';

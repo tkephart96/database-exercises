@@ -15,6 +15,7 @@ Petter Stroustrup
 select * from employees where hire_date like '199%' and birth_date like '%12-25' order by hire_date limit 5;
 -- 4 LIMIT sets the page length, while OFFSET sets the start of the page
 select * from employees where hire_date like '199%' and birth_date like '%12-25' order by hire_date limit 5 offset 45;
+select * from employees where hire_date like '199%' and birth_date like '%12-25' order by hire_date limit 45, 5;
 
 
 
