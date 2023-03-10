@@ -37,6 +37,7 @@ select concat(first_name,' ',last_name) as full_name
 -- 6 
 select min(salary),max(salary) 
 	from salaries
+	where to_date >= curdate()
 ;
 -- 7
 select lower(
