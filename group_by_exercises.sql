@@ -22,7 +22,6 @@ select first_name,last_name
 ;
 -- 5 Chelq, Lindqvist, Qiwen
 select last_name
-	-- select distinct last_name 
 	from employees 
     where last_name 
     like '%q%' 
@@ -47,12 +46,9 @@ select first_name,gender,count(*)
     group by first_name, gender
 ;
 -- 8
-select lower(
-	concat(
-	substr(first_name,1,1)
-	,substr(last_name,1,4)
-    ,'_'
-    ,date_format(birth_date, '%m%y')
+select lower(concat(
+	left(first_name,1),left(last_name,4)
+    ,date_format(birth_date, '_%m%y')
 	)) as username
     ,count(*)
 	from employees
@@ -66,9 +62,10 @@ select lower(concat( -- show dupes
 	,count(*) as duplicate
 	from employees
     group by username
-    order by count(*) desc
+    having duplicate > 1
+    order by duplicate desc
 ;
-select count(duplicate) -- count unique dupes
+select count(*) -- count unique dupes
 	from (select lower(concat(
 		left(first_name,1),left(last_name,4)
 		,date_format(birth_date,'_%m%y')
