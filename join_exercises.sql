@@ -63,11 +63,9 @@ select t.title
 	from titles as t
 	join dept_emp as de
 		on t.emp_no = de.emp_no
-	join departments as d
-		on de.dept_no = d.dept_no
 	where de.to_date > now()
 		and t.to_date > now()
-		and d.dept_no = 'd009'
+		and de.dept_no = 'd009'
     group by title
     order by title
 ;
@@ -164,7 +162,8 @@ select d.dept_name as department
 ;
 -- 11 Bonus
 select * from departments, dept_manager, dept_emp, employees;
-select emp.employee, emp.dept, mgr.manager
+select -- count(*) 
+	emp.employee, emp.dept, mgr.manager
 	from ( -- emp and dept
 	select concat(e.first_name, ' ', e.last_name) as employee
 			, d.dept_name as dept
@@ -190,35 +189,34 @@ select emp.employee, emp.dept, mgr.manager
 		on emp.dept = mgr.dept
 ;
 
--- 12 
+-- 12 Bonus: Who is the highest paid employee for each department?
 select * from employees, departments, dept_emp, salaries;
 select empsal.employee, dptsal.dept, dptsal.max_salary
-from (
-select d.dept_name as dept
-    , max(s.salary) as max_salary
-	from dept_emp as de
-	join departments as d
-		on de.dept_no = d.dept_no
-	join salaries as s
-		on de.emp_no = s.emp_no
-	where s.to_date > now()
-    group by dept
-    order by max_salary desc
-    ) as dptsal
--- ;
-join (
-select concat(e.first_name, ' ', e.last_name) as employee
-    , max(s.salary) as max_salary
-	from dept_emp as de
-    join employees as e
-		on e.emp_no = de.emp_no
-	join salaries as s
-		on de.emp_no = s.emp_no
-	where s.to_date > now()
-    group by employee
-    order by max_salary desc
-    ) as empsal
-		on empsal.max_salary = dptsal.max_salary
+from ( -- dept and sal
+	select d.dept_name as dept
+		, max(s.salary) as max_salary
+		from dept_emp as de
+		join departments as d
+			on de.dept_no = d.dept_no
+		join salaries as s
+			on de.emp_no = s.emp_no
+		where s.to_date > now()
+		group by dept
+		order by max_salary desc
+		) as dptsal
+	join ( -- emp and sal
+	select concat(e.first_name, ' ', e.last_name) as employee
+		, max(s.salary) as max_salary
+		from dept_emp as de
+		join employees as e
+			on e.emp_no = de.emp_no
+		join salaries as s
+			on de.emp_no = s.emp_no
+		where s.to_date > now()
+		group by employee
+		order by max_salary desc
+		) as empsal
+			on empsal.max_salary = dptsal.max_salary
 ;
 
 
