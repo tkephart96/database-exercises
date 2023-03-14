@@ -108,7 +108,7 @@ select d.dept_name as department
 		on de.dept_no = d.dept_no
 	join salaries as s
 		on de.emp_no = s.emp_no
-	where s.to_date > now()
+	where s.to_date > now() and de.to_date > now()
     group by department
     order by avg_salary desc
     limit 1
@@ -126,6 +126,7 @@ select e.first_name
 	join salaries as s
 		on de.emp_no = s.emp_no
 	where s.to_date > now()
+		and de.to_date > now()
 		and d.dept_no = 'd001'
     order by s.salary desc
     limit 1
@@ -200,9 +201,8 @@ from ( -- dept and sal
 			on de.dept_no = d.dept_no
 		join salaries as s
 			on de.emp_no = s.emp_no
-		where s.to_date > now()
+		where s.to_date > now() and de.to_date > now()
 		group by dept
-		order by max_salary desc
 		) as dptsal
 	join ( -- emp and sal
 	select concat(e.first_name, ' ', e.last_name) as employee
@@ -212,12 +212,8 @@ from ( -- dept and sal
 			on e.emp_no = de.emp_no
 		join salaries as s
 			on de.emp_no = s.emp_no
-		where s.to_date > now()
+		where s.to_date > now() and de.to_date > now()
 		group by employee
-		order by max_salary desc
 		) as empsal
 			on empsal.max_salary = dptsal.max_salary
 ;
-
-
-
