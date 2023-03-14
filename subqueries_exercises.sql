@@ -16,7 +16,7 @@ where hire_date = (
 ;
 
 -- 2
-select * 
+select title 
 from titles
 where emp_no in (
 	select emp_no
@@ -24,18 +24,18 @@ where emp_no in (
     where first_name = 'Aamod'
     )
 	and to_date > now()
+    group by title
 ;
 
--- 3 85108 employees no longer w/company
-select count(*)
+-- 3 59900 employees no longer w/company
+select count(emp_no)
 from employees
-where emp_no in (
+where emp_no not in (
 	select emp_no
     from dept_emp
-    where to_date < now()
+    where to_date > now()
     )
 ;
-
 -- 4 Isamu Legleitner, Karsten Sigstam, Leon DasSarma, Hilary Kambil
 select *
 from employees
@@ -61,27 +61,19 @@ where emp_no in (
 	)
 ;
 
--- 6 83 current salaries within 1 std of max current salary, .03%
+-- 6 83 current salaries within 1 std of max current salary, .0346% for current .0029% for all salaries
 select count(salary) as wthn_std_max
-	, concat(round(
-				(count(salary) 
-				/ (
-					select count(salary) 
-					from salaries 
-                    -- where to_date > now()
-					) * 100
-				),3)
-			,'%') as percentage
+	, concat(round((count(salary)
+    / (select count(salary) 
+	from salaries 
+	-- where to_date > now()
+	) * 100),4),'%') as percentage
 from salaries
-where salary > ((
-	select max(salary)
+where salary > (
+	select max(salary) - std(salary)
 	from salaries
 	where to_date > now()
-	) - (
-    select std(salary)
-	from salaries
-	where to_date > now()
-	))
+	)
     and to_date > now()
 ;
 
