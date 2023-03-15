@@ -124,7 +124,7 @@ where dept_no in (
 
 -- 4
 select * from employees, departments, dept_emp, salaries;
-select empsal.employee, dptsal.dept, dptsal.max_salary
+select es.employee, ds.dept, ds.max_salary
 from ( -- dept and sal
 	select d.dept_name as dept
 		, max(s.salary) as max_salary
@@ -135,7 +135,7 @@ from ( -- dept and sal
 			on de.emp_no = s.emp_no
 		where s.to_date > now() and de.to_date > now()
 		group by dept
-		) as dptsal
+		) as ds
 	join ( -- emp and sal
 	select concat(e.first_name, ' ', e.last_name) as employee
 		, max(s.salary) as max_salary
@@ -146,15 +146,9 @@ from ( -- dept and sal
 			on de.emp_no = s.emp_no
 		where s.to_date > now() and de.to_date > now()
 		group by employee
-		) as empsal
-			on empsal.max_salary = dptsal.max_salary
+		) as es
+			on es.max_salary = ds.max_salary
 ;
-
-
-
-
-
-
 
 
 
