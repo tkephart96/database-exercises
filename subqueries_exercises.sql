@@ -5,14 +5,14 @@ show tables;
 -- 1 
 select * 
 from employees as e
-join dept_emp as de
-	on de.emp_no = e.emp_no
+join salaries as s
+	on s.emp_no = e.emp_no
 where hire_date = (
 	select hire_date
     from employees
 	where emp_no = 101010
     )
-    and de.to_date > now()
+    and s.to_date > now()
 ;
 
 -- 2
@@ -124,31 +124,22 @@ where dept_no in (
 
 -- 4
 select * from employees, departments, dept_emp, salaries;
-select es.employee, ds.dept, ds.max_salary
-from ( -- dept and sal
-	select d.dept_name as dept
-		, max(s.salary) as max_salary
-		from dept_emp as de
-		join departments as d
-			on de.dept_no = d.dept_no
-		join salaries as s
-			on de.emp_no = s.emp_no
-		where s.to_date > now() and de.to_date > now()
-		group by dept
-		) as ds
-	join ( -- emp and sal
-	select concat(e.first_name, ' ', e.last_name) as employee
-		, max(s.salary) as max_salary
-		from dept_emp as de
-		join employees as e
-			on e.emp_no = de.emp_no
-		join salaries as s
-			on de.emp_no = s.emp_no
-		where s.to_date > now() and de.to_date > now()
-		group by employee
-		) as es
-			on es.max_salary = ds.max_salary
+select d.dept_name
+	,concat(e.first_name,' ',e.last_name) as empployee
+    ,s.salary
+    from salaries as s
+    join dept_emp as de using(emp_no)
+    join employees as e using(emp_no)
+    join departments as d using(dept_no)
+    join (select max(salary) as maxsal
+			,dept_no
+            from salaries as s
+            join dept_emp as de using(emp_no)
+            group by de.dept_no
+            ) as dsal
+            on dsal.maxsal = s.salary and dsal.dept_no = de.dept_no
 ;
+
 
 
 
